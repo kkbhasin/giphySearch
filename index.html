@@ -15,58 +15,98 @@
 </head>
 
 <body>
-    <form>
-        <input type="text">
-        <input type="submit" value="save">
-    </form>
-    <div id="button-area">
-
+    <div class="jumbotron col-10 text-center">
+        <img src="assets/images/giphy.gif" alt="giphy" style="height: auto; width: 100%; max-width: 520px;">
+        <h1>Search Page</h1>
     </div>
-    <div id="gif-area">
+    <div class="jumbotron col-10 text-center">
+        <div class="form-group col-8">
+            <form>
+                <input id="show-value" class="form-control" type="text" placeholder="Type a TV show here...">
+                <button id="add-show" type="submit" class="btn btn-danger">Submit</button>
+            </form>
+        </div>
+        <br>
+        <div id="button-area">
 
+        </div>
+        <div id="gif-area">
+
+        </div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="assets/javascript/app.js"></script>
 
-    <script>
+    <script type="text/javascript">
 
         var tvShows = ["Game of Thrones", "The Expanse", "Westworld", "Stranger Things", "DARK netflix", "Silicon Valley", "The Office", "Rick and Morty"];
+        var button = $("<button>");
+        var addShow = $("#add-show");
+        var showValue = $("#show-value");
+        var show;
+        var queryURL;
 
-        for (i = 0; i < tvShows.length; i++) {
-            var button = $("<button>");
-            btn = {
-                generator: function () {
-                    return tvShows[i];
-                }
-            };
+        function queryGif() {
+            $("#button-area").empty();
 
-            button.each(function () {
-                $(this).text(btn.generator()).attr("data-name", btn.generator());
+            for (var i = 0; i < tvShows.length; i++) {
+                button = $("<button>");
+                button.text(tvShows[i]).addClass("btn btn-md btn-dark").attr({"data-name": tvShows[i], "id": "show"});
                 $("#button-area").append(button);
+            }
+        };
 
-                var queryURL = "https://api.giphy.com/v1/gifs/trending?api_key=lZmoHvNGfZTWDHmraYUAgeyzv20gygnH&q=" + tvShows[i] + "&limit=10";
+        $(document).on("click", "#show", function() {
+            var tv = $(this).attr("data-name");
+            queryURL = "https://api.giphy.com/v1/gifs/search?q=" + tv + "&api_key=lZmoHvNGfZTWDHmraYUAgeyzv20gygnH&limit=10";
 
-                $.ajax({
-                    url: queryURL,
-                    method: "GET"
-                }).then(function (response) {
-                    var gifObject = response.data;
-                    console.log(gifObject);
-                    for (j = 0; j < result.length; j++) {
-                        var gifDiv = $("<div class='col-2 item'>");
-                        var rating = results[i].rating;
-                        var p = $("<p>").text("Rating: " + rating);
-                        var gif = $("<img>")
-                        gif.attr("src", results[i].images.fixed_height.url);
-                        gifDiv.prepend(p);
-                        gifDiv.prepend(gif);
-                    };
-                });
-
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function (response) {
+                var result = response.data;
+                console.log(result);
+                for (var i = 0; i < result.length; i++) {
+                    var gifDiv = $("<div>");
+                    var rating = result[i].rating;
+                    var p = $("<p>").text("Rating: " + rating);
+                    var gif = $("<img>")
+                    gif.attr({
+                        "src": result[i].images.fixed_height_still.url,
+                        "data-still": result[i].images.fixed_height_still.url,
+                        "data-animate": result[i].images.fixed_height.url,
+                        "data-state": "still"
+                        }).addClass("gif");
+                    gifDiv.prepend(p);
+                    gifDiv.prepend(gif);
+                    $("#gif-area").prepend(gifDiv);
+                };
             });
-        }
+            console.log(tv);
+        });
 
+        $(document).on("click", ".gif", function() {
+            var state = $(this).attr("data-state");
+
+            if (state === "still") {
+                $(this).attr("src", $(this).attr("data-animate"));
+                $(this).attr("data-state", "animate");
+            } else {
+                $(this).attr("src", $(this).attr("data-still"));
+                $(this).attr("data-state", "still");
+            }
+            console.log(state);
+        });
+
+        addShow.on("click", function (event) {
+            event.preventDefault();
+            show = showValue.val().trim();
+            tvShows.push(show);
+            showValue.val("");
+            queryGif();
+        });
+
+        queryGif();
 
     </script>
 

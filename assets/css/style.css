@@ -1,11 +1,27 @@
 h1 {
-    font-size: 48px;
+    font-size: 10vw;
     margin-top: 20px;
     margin-bottom: -25px;
 }
 
+p {
+    font-size: 2vw;
+}
+
 body {
     background-image: url("../images/blackmamba.png");
+}
+
+.header {
+    color: #353A3F;
+}
+
+#h-img {
+    height: auto; 
+    width: 100%; 
+    max-width: 520px; 
+    display: block; 
+    margin: auto;
 }
 
 div {
@@ -16,11 +32,22 @@ div {
 .jumbotron {
     display: block;
     margin: auto;
-    margin-bottom: 30px;
-    transform: translate(0%, 10%);
+    padding: 25px;
     background-color: rgba(255, 255, 255, .4);
+    margin-bottom: 20px;
+    margin-top: 10px;
 }
 
 button {
     margin: 10px;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+#gif-area {
+    margin-top: 20px;
 }
